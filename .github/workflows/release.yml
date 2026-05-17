@@ -54,8 +54,12 @@ jobs:
           mkdir -p "dist/safari-wrapper/CrunchyrollController/Shared (App)/Resources"
           cp assets/icon128.png "dist/safari-wrapper/CrunchyrollController/Shared (App)/Resources/Icon.png" || true
           
+          # Workaround 2: As vezes o Xcode Project gerado espera o 'Icon.png' numa pasta diferente dependendo da versão do MacOS no github actions
+          find dist/safari-wrapper -name "Icon.png" || true
+          cp assets/icon128.png "dist/safari-wrapper/CrunchyrollController/CrunchyrollController/Resources/Icon.png" || true
+          
           # 2. Faz o build do arquivo .app no Xcode usando assinatura ad-hoc (CODE_SIGN_IDENTITY="-") e desligando otimização do Swift para evitar crash do SwiftUI (SWIFT_OPTIMIZATION_LEVEL="-Onone")
-          xcodebuild -project "dist/safari-wrapper/CrunchyrollController/CrunchyrollController.xcodeproj" -scheme "CrunchyrollController (macOS)" -configuration Release CODE_SIGN_IDENTITY="-" SWIFT_OPTIMIZATION_LEVEL="-Onone" build SYMROOT="$(pwd)/dist/safari-build"
+          xcodebuild -project "dist/safari-wrapper/CrunchyrollController/CrunchyrollController.xcodeproj" -scheme "CrunchyrollController (macOS)" -configuration Release CODE_SIGN_IDENTITY="-" build SYMROOT="$(pwd)/dist/safari-build" || ( echo "Xcode build failed, checking logs..." && false )
           
           # 3. Zipa o arquivo .app gerado
           cd dist/safari-build/Release && zip -r ../../../crunchyroll-safari-v${{ env.VERSION }}.zip CrunchyrollController.app && cd ../../..
