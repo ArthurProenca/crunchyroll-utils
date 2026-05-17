@@ -12,9 +12,14 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Prepare Extension Files
+      run: |
+        mkdir -p ExtensionSource
+        cp manifest.json popup.html popup.js content.js ExtensionSource/
+
     - name: Convert to Safari Web Extension
       run: |
-        xcrun safari-web-extension-converter ./ --project-location ./SafariProject --app-name "CrunchyrollSpeed" --no-prompt --no-open
+        xcrun safari-web-extension-converter ./ExtensionSource --project-location ./SafariProject --app-name "CrunchyrollSpeed" --no-prompt --no-open
         
     - name: Build Xcode Project
       run: |
