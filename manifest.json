@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Crunchyroll Speed Controller",
+  "version": "1.0",
+  "description": "Controle a velocidade de reprodução dos animes no Crunchyroll.",
+  "permissions": ["activeTab"],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.crunchyroll.com/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
