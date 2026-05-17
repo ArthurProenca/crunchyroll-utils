@@ -28,17 +28,17 @@ jobs:
           mkdir -p dist/firefox dist/chrome dist/safari
           
           # Arquivos comuns
-          FILES="popup.html popup.js content.js"
+          FILES="popup.html popup.js content.js assets"
           
           # Para o Firefox, copiamos o manifest original (que tem o browser_specific_settings)
-          cp manifest.json $FILES dist/firefox/
+          cp -r manifest.json $FILES dist/firefox/
           
           # Para Chrome e Safari, removemos a chave browser_specific_settings do manifest para evitar warnings nas lojas deles
           jq 'del(.browser_specific_settings)' manifest.json > manifest-clean.json
           cp manifest-clean.json dist/chrome/manifest.json
-          cp $FILES dist/chrome/
+          cp -r $FILES dist/chrome/
           cp manifest-clean.json dist/safari/manifest.json
-          cp $FILES dist/safari/
+          cp -r $FILES dist/safari/
 
       - name: Build and Zip packages
         run: |

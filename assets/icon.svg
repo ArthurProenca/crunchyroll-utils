@@ -1,0 +1,6 @@
+<svg fill="none" viewBox="0 0 128 128" width="128" height="128" xmlns="http://www.w3.org/2000/svg">
+  <rect width="128" height="128" rx="28" fill="#141519"/>
+  <!-- Forward double arrows -->
+  <path d="M35 38 L75 64 L35 90 Z" fill="#f47521"/>
+  <path d="M65 38 L105 64 L65 90 Z" fill="#f47521"/>
+</svg>

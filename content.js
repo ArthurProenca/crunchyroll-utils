@@ -2,6 +2,37 @@ function getVideo() {
     return document.querySelector('video');
 }
 
+// Function to trigger a stylish toast notification
+function showToast(message) {
+    let toast = document.getElementById('crunchyroll-speed-toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'crunchyroll-speed-toast';
+        toast.style.position = 'fixed';
+        toast.style.bottom = '30px';
+        toast.style.right = '30px';
+        toast.style.padding = '12px 20px';
+        toast.style.backgroundColor = 'rgba(20, 21, 25, 0.9)';
+        toast.style.color = '#f47521';
+        toast.style.fontWeight = 'bold';
+        toast.style.borderRadius = '8px';
+        toast.style.zIndex = '9999999';
+        toast.style.fontFamily = 'Arial, sans-serif';
+        toast.style.boxShadow = '0 4px 12px rgba(0,0,0,0.5)';
+        toast.style.transition = 'opacity 0.3s ease-in-out';
+        document.body.appendChild(toast);
+    }
+    
+    toast.textContent = message;
+    toast.style.opacity = '1';
+
+    // Clear any existing fading timeout so it doesn't blink weirdly
+    if (toast.timeoutId) clearTimeout(toast.timeoutId);
+    toast.timeoutId = setTimeout(() => {
+        toast.style.opacity = '0';
+    }, 2500);
+}
+
 // Automatically apply saved speed
 function applySavedSpeed() {
     chrome.storage.local.get(['crunchyrollSpeed'], (result) => {
@@ -27,6 +58,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (video) {
         video.playbackRate = request.speed;
         console.log(`[Crunchyroll Super Controller] Playback speed manually set to ${request.speed}x`);
+        showToast(`Speed set to ${request.speed}x`);
     } 
   }
 });
