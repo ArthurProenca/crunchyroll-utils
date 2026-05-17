@@ -16,16 +16,45 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Zip extension files
+      - name: Set Version
+        id: version
         run: |
-          zip -r crunchyroll-super-controller.zip manifest.json popup.html popup.js content.js
+          BASE_VERSION=$(jq -r .version manifest.json)
+          NEW_VERSION="${BASE_VERSION}.${{ github.run_number }}"
+          echo "VERSION=$NEW_VERSION" >> $GITHUB_ENV
+
+      - name: Prepare Extension Files
+        run: |
+          mkdir -p dist/firefox dist/chrome dist/safari
+          
+          # Arquivos comuns
+          FILES="popup.html popup.js content.js"
+          
+          # Para o Firefox, copiamos o manifest original (que tem o browser_specific_settings)
+          cp manifest.json $FILES dist/firefox/
+          
+          # Para Chrome e Safari, removemos a chave browser_specific_settings do manifest para evitar warnings nas lojas deles
+          jq 'del(.browser_specific_settings)' manifest.json > manifest-clean.json
+          cp manifest-clean.json dist/chrome/manifest.json
+          cp $FILES dist/chrome/
+          cp manifest-clean.json dist/safari/manifest.json
+          cp $FILES dist/safari/
+
+      - name: Zip packages
+        run: |
+          cd dist/firefox && zip -r ../../crunchyroll-firefox-v${{ env.VERSION }}.zip . && cd ../..
+          cd dist/chrome && zip -r ../../crunchyroll-chrome-v${{ env.VERSION }}.zip . && cd ../..
+          cd dist/safari && zip -r ../../crunchyroll-safari-v${{ env.VERSION }}.zip . && cd ../..
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: build-${{ github.sha }}
-          name: Automated Build (${{ github.sha }})
-          body: "Auto-generated release for commit ${{ github.sha }}."
-          files: crunchyroll-super-controller.zip
+          tag_name: v${{ env.VERSION }}
+          name: Release v${{ env.VERSION }}
+          body: "Auto-generated release for version ${{ env.VERSION }}."
+          files: |
+            crunchyroll-chrome-v${{ env.VERSION }}.zip
+            crunchyroll-firefox-v${{ env.VERSION }}.zip
+            crunchyroll-safari-v${{ env.VERSION }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
