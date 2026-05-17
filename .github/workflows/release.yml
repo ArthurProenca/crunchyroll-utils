@@ -50,8 +50,8 @@ jobs:
           # 1. Cria a base do projeto Xcode
           xcrun safari-web-extension-converter dist/safari --project-location dist/safari-wrapper --app-name "CrunchyrollController" --no-prompt --no-open
           
-          # 2. Faz o build do arquivo .app no Xcode ignorando a assinatura do desenvolvedor (CODE_SIGNING_ALLOWED=NO)
-          xcodebuild -project "dist/safari-wrapper/CrunchyrollController/CrunchyrollController.xcodeproj" -scheme "CrunchyrollController (macOS)" -configuration Release CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO build SYMROOT="$(pwd)/dist/safari-build"
+          # 2. Faz o build do arquivo .app no Xcode usando assinatura ad-hoc (CODE_SIGN_IDENTITY="-") para que o macOS não recuse o app
+          xcodebuild -project "dist/safari-wrapper/CrunchyrollController/CrunchyrollController.xcodeproj" -scheme "CrunchyrollController (macOS)" -configuration Release CODE_SIGN_IDENTITY="-" build SYMROOT="$(pwd)/dist/safari-build"
           
           # 3. Zipa o arquivo .app gerado
           cd dist/safari-build/Release && zip -r ../../../crunchyroll-safari-v${{ env.VERSION }}.zip CrunchyrollController.app && cd ../../..
