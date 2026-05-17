@@ -1,0 +1,31 @@
+name: Build and Release Extension
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Necessário para criar releases
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Zip extension files
+        run: |
+          zip -r crunchyroll-super-controller.zip manifest.json popup.html popup.js content.js
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.sha }}
+          name: Automated Build (${{ github.sha }})
+          body: "Auto-generated release for commit ${{ github.sha }}."
+          files: crunchyroll-super-controller.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
