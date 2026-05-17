@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     permissions:
       contents: write # Necessário para criar releases
     steps:
@@ -40,11 +40,21 @@ jobs:
           cp manifest-clean.json dist/safari/manifest.json
           cp $FILES dist/safari/
 
-      - name: Zip packages
+      - name: Build and Zip packages
         run: |
+          # ZIP padrão para Firefox e Chrome
           cd dist/firefox && zip -r ../../crunchyroll-firefox-v${{ env.VERSION }}.zip . && cd ../..
           cd dist/chrome && zip -r ../../crunchyroll-chrome-v${{ env.VERSION }}.zip . && cd ../..
-          cd dist/safari && zip -r ../../crunchyroll-safari-v${{ env.VERSION }}.zip . && cd ../..
+          
+          # Construindo a Web Extension do Safari para gerar o .app
+          # 1. Cria a base do projeto Xcode
+          xcrun safari-web-extension-converter dist/safari --project-location dist/safari-wrapper --app-name "CrunchyrollController" --no-prompt --no-open
+          
+          # 2. Faz o build do arquivo .app no Xcode ignorando a assinatura do desenvolvedor (CODE_SIGNING_ALLOWED=NO)
+          xcodebuild -project "dist/safari-wrapper/CrunchyrollController/CrunchyrollController.xcodeproj" -scheme "CrunchyrollController (macOS)" -configuration Release CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO build SYMROOT="$(pwd)/dist/safari-build"
+          
+          # 3. Zipa o arquivo .app gerado
+          cd dist/safari-build/Release && zip -r ../../../crunchyroll-safari-v${{ env.VERSION }}.zip CrunchyrollController.app && cd ../../..
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
