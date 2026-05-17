@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Crunchyroll Super Controller",
   "version": "1.1",
-  "description": "Controle a velocidade, ative Picture-in-Picture e salve suas preferências no Crunchyroll.",
+  "description": "Control your playback speed and save your preferences on Crunchyroll.",
   "permissions": ["activeTab", "storage"],
   "action": {
     "default_popup": "popup.html"

@@ -4,57 +4,60 @@
   <meta charset="utf-8">
   <style>
     body {
-      font-family: Arial, sans-serif;
-      padding: 10px;
-      width: 170px;
-      background-color: #f2f2f2;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 12px;
+      width: 180px;
+      background-color: #141519;
+      margin: 0;
+      color: #ffffff;
     }
     h3 {
       text-align: center;
       margin-top: 0;
+      margin-bottom: 12px;
       color: #f47521;
-      font-size: 16px;
+      font-size: 15px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
     }
     button {
       width: 100%;
-      margin-bottom: 8px;
-      padding: 8px;
+      padding: 8px 4px;
       cursor: pointer;
-      background-color: #fff;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-weight: bold;
-      transition: background 0.2s;
+      background-color: #23252b;
+      color: #ffffff;
+      border: 1px solid #33363e;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 13px;
+      transition: all 0.2s ease;
     }
     button:hover {
-      background-color: #e0e0e0;
-    }
-    .pip-btn {
       background-color: #f47521;
-      color: white;
-      border: none;
-      margin-top: 10px;
+      border-color: #f47521;
+      color: #141519;
     }
-    .pip-btn:hover {
-      background-color: #d1611a;
-    }
-    hr {
-      border: 0;
-      border-top: 1px solid #ccc;
-      margin: 10px 0;
+    .full-width {
+      grid-column: span 2;
     }
   </style>
 </head>
 <body>
-  <h3>Crunchyroll Extra</h3>
-  <button class="speed-btn" data-speed="0.75">0.75x</button>
-  <button class="speed-btn" data-speed="1.0">1.0x (Normal)</button>
-  <button class="speed-btn" data-speed="1.25">1.25x</button>
-  <button class="speed-btn" data-speed="1.5">1.5x</button>
-  <button class="speed-btn" data-speed="2.0">2.0x</button>
-  
-  <hr>
-  <button id="pip-btn" class="pip-btn">Picture-in-Picture 🎬</button>
+  <h3>Playback Speed</h3>
+  <div class="grid">
+    <button class="speed-btn" data-speed="0.75">0.75x</button>
+    <button class="speed-btn" data-speed="1.25">1.25x</button>
+    <button class="speed-btn full-width" data-speed="1.0">1.0x (Normal)</button>
+    <button class="speed-btn" data-speed="1.5">1.5x</button>
+    <button class="speed-btn" data-speed="1.8">1.8x</button>
+    <button class="speed-btn full-width" data-speed="2.0">2.0x</button>
+  </div>
   
   <script src="popup.js"></script>
 </body>

@@ -2,40 +2,31 @@ function getVideo() {
     return document.querySelector('video');
 }
 
-// Aplica a velocidade salva automaticamente
+// Automatically apply saved speed
 function applySavedSpeed() {
     chrome.storage.local.get(['crunchyrollSpeed'], (result) => {
         const speed = result.crunchyrollSpeed || 1.0;
         const video = getVideo();
-        // Apenas recarrega a velocidade se estiver diferente
+        // Only updates speed if it's different to avoid overriding
         if (video && video.playbackRate !== speed) {
             video.playbackRate = speed;
         }
     });
 }
 
-// Verifica periodicamente (útil porque o Crunchyroll troca de episódio sem recarregar a página - SPA)
+// Check periodically (useful since Crunchyroll changes episodes without reloading page like a SPA)
 setInterval(applySavedSpeed, 2000);
 
-// Escuta mensagens vindas do popup
+// Listen to messages from popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   const video = getVideo();
   
   if (request.action === "setSpeed") {
-    // Salva a preferência
+    // Save preference
     chrome.storage.local.set({ crunchyrollSpeed: request.speed });
     if (video) {
         video.playbackRate = request.speed;
-        console.log(`[Crunchyroll Super Controller] Velocidade manually alterada para ${request.speed}x`);
+        console.log(`[Crunchyroll Super Controller] Playback speed manually set to ${request.speed}x`);
     } 
-  } 
-  else if (request.action === "togglePiP") {
-      if (video) {
-          if (document.pictureInPictureElement) {
-              document.exitPictureInPicture();
-          } else {
-              video.requestPictureInPicture();
-          }
-      }
   }
 });
