@@ -50,12 +50,14 @@ jobs:
           # 1. Cria a base do projeto Xcode
           xcrun safari-web-extension-converter dist/safari --project-location dist/safari-wrapper --app-name "CrunchyrollController" --no-prompt --no-open
           
-          # 1.5 Workaround para o conversor do Safari: forçar a presença do Icon.png onde o Xcode espera
-          mkdir -p "dist/safari-wrapper/CrunchyrollController/Shared (App)/Resources"
-          cp assets/icon128.png "dist/safari-wrapper/CrunchyrollController/Shared (App)/Resources/Icon.png" || true
+          # 1.5 Workaround para o conversor do Safari: O Xcode procura Icon.png usando um path de script interno.
+          # Em vez de tentar advinhar, vamos clonar o ícone em todas as pastas Resources geradas pelo xcode!
+          find dist/safari-wrapper -type d -name "Resources" -exec cp assets/icon128.png {}/Icon.png \;
+          find dist/safari-wrapper -type d -name "Resources" -exec cp dist/safari/assets/icon128.png {}/Icon.png \;
           
-          # Workaround genérico para ícone do Safari (cobre qualquer nome de projeto ou pasta que o Mac gerar):
-          find dist/safari-wrapper -type d -name "Shared (App)" -exec mkdir -p "{}/Resources" \; -exec cp assets/icon128.png "{}/Resources/Icon.png" \;
+          # Garantir que o diretorio 'Shared (App)/Resources' exista
+          mkdir -p "dist/safari-wrapper/CrunchyrollController/Shared (App)/Resources"
+          cp assets/icon128.png "dist/safari-wrapper/CrunchyrollController/Shared (App)/Resources/Icon.png"
           
           # 2. Faz o build do arquivo .app no Xcode usando assinatura ad-hoc (CODE_SIGN_IDENTITY="-") e desligando otimização do Swift para evitar crash do SwiftUI (SWIFT_OPTIMIZATION_LEVEL="-Onone")
           xcodebuild -project "dist/safari-wrapper/CrunchyrollController/CrunchyrollController.xcodeproj" -scheme "CrunchyrollController (macOS)" -configuration Release CODE_SIGN_IDENTITY="-" SWIFT_OPTIMIZATION_LEVEL="-Onone" build SYMROOT="$(pwd)/dist/safari-build"
