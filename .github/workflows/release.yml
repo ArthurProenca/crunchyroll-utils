@@ -28,20 +28,17 @@ jobs:
           mkdir -p dist/firefox dist/chrome dist/safari
           
           # Arquivos comuns
-          FILES="popup.html popup.js content.js assets"
+          FILES="popup.html popup.js content.js"
           
           # Para o Firefox, copiamos o manifest original (que tem o browser_specific_settings)
-          cp -r manifest.json $FILES dist/firefox/
+          cp manifest.json $FILES dist/firefox/
           
           # Para Chrome e Safari, removemos a chave browser_specific_settings do manifest para evitar warnings nas lojas deles
           jq 'del(.browser_specific_settings)' manifest.json > manifest-clean.json
           cp manifest-clean.json dist/chrome/manifest.json
-          cp -r $FILES dist/chrome/
-          
-          # Para o Safari, vamos remover as entradas de ícones do manifest
-          # Isso impede o conversor da Apple de procurar arquivos e quebrar o build do Xcode
-          jq 'del(.icons) | del(.action.default_icon)' manifest-clean.json > dist/safari/manifest.json
-          cp -r $FILES dist/safari/
+          cp $FILES dist/chrome/
+          cp manifest-clean.json dist/safari/manifest.json
+          cp $FILES dist/safari/
 
       - name: Build and Zip packages
         run: |
@@ -50,11 +47,11 @@ jobs:
           cd dist/chrome && zip -r ../../crunchyroll-chrome-v${{ env.VERSION }}.zip . && cd ../..
           
           # Construindo a Web Extension do Safari para gerar o .app
-          # dir -p "dist/safari-wrapper/CrunchyrollController/Shared (App)/Resources"
-          cp assets/icon128.png "dist/safari-wrapper/CrunchyrollController/Shared (App)/Resources/Icon.png"
+          # 1. Cria a base do projeto Xcode
+          xcrun safari-web-extension-converter dist/safari --project-location dist/safari-wrapper --app-name "CrunchyrollController" --no-prompt --no-open
           
-          # 2. Faz o build do arquivo .app no Xcode usando assinatura ad-hoc (CODE_SIGN_IDENTITY="-") e desligando otimização do Swift para evitar crash do SwiftUI (SWIFT_OPTIMIZATION_LEVEL="-Onone")
-          xcodebuild -project "dist/safari-wrapper/CrunchyrollController/CrunchyrollController.xcodeproj" -scheme "CrunchyrollController (macOS)" -configuration Release CODE_SIGN_IDENTITY="-" SWIFT_OPTIMIZATION_LEVEL="-Onone" build SYMROOT="$(pwd)/dist/safari-build"
+          # 2. Faz o build do arquivo .app no Xcode usando assinatura ad-hoc (CODE_SIGN_IDENTITY="-") para que o macOS não recuse o app
+          xcodebuild -project "dist/safari-wrapper/CrunchyrollController/CrunchyrollController.xcodeproj" -scheme "CrunchyrollController (macOS)" -configuration Release CODE_SIGN_IDENTITY="-" build SYMROOT="$(pwd)/dist/safari-build"
           
           # 3. Zipa o arquivo .app gerado
           cd dist/safari-build/Release && zip -r ../../../crunchyroll-safari-v${{ env.VERSION }}.zip CrunchyrollController.app && cd ../../..
