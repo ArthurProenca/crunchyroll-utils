@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "Crunchyroll Speed Controller",
-  "version": "1.0",
-  "description": "Controle a velocidade de reprodução dos animes no Crunchyroll.",
-  "permissions": ["activeTab"],
+  "name": "Crunchyroll Super Controller",
+  "version": "1.1",
+  "description": "Controle a velocidade, ative Picture-in-Picture e salve suas preferências no Crunchyroll.",
+  "permissions": ["activeTab", "storage"],
   "action": {
     "default_popup": "popup.html"
   },
@@ -12,5 +12,10 @@
       "matches": ["*://*.crunchyroll.com/*"],
       "js": ["content.js"]
     }
-  ]
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "crunchyroll-super@arthur.dev"
+    }
+  }
 }

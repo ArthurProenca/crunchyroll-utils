@@ -1,0 +1,50 @@
+name: Build Extensions (Safari, Chrome, Firefox)
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build-safari:
+    runs-on: macos-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Convert to Safari Web Extension
+      run: |
+        xcrun safari-web-extension-converter ./ --project-location ./SafariProject --app-name "CrunchyrollSpeed" --no-prompt --no-open
+        
+    - name: Build Xcode Project
+      run: |
+        cd SafariProject/CrunchyrollSpeed
+        xcodebuild build -project "CrunchyrollSpeed.xcodeproj" -scheme "CrunchyrollSpeed (macOS)" -configuration Release SYMROOT="$(pwd)/build"
+        
+    - name: Archive macOS App
+      run: |
+        cd SafariProject/CrunchyrollSpeed/build/Release
+        zip -r Safari-Extension.zip "CrunchyrollSpeed.app"
+        
+    - name: Upload Safari Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Safari-Extension
+        path: SafariProject/CrunchyrollSpeed/build/Release/Safari-Extension.zip
+
+  build-chrome-firefox:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Pack Chrome and Firefox Extension
+      run: |
+        # Zipa o código ignorando arquivos sensíveis/locais de Git
+        zip -r Chrome-Firefox-Extension.zip . -x "*.git*" -x "*.github*" -x ".DS_Store" -x "SafariProject/*"
+        
+    - name: Upload Chrome/Firefox Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Chrome-Firefox-Extension
+        path: Chrome-Firefox-Extension.zip

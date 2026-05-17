@@ -6,13 +6,14 @@
     body {
       font-family: Arial, sans-serif;
       padding: 10px;
-      width: 150px;
+      width: 170px;
       background-color: #f2f2f2;
     }
     h3 {
       text-align: center;
       margin-top: 0;
-      color: #f47521; /* Crunchyroll orange */
+      color: #f47521;
+      font-size: 16px;
     }
     button {
       width: 100%;
@@ -23,19 +24,37 @@
       border: 1px solid #ccc;
       border-radius: 4px;
       font-weight: bold;
+      transition: background 0.2s;
     }
     button:hover {
       background-color: #e0e0e0;
     }
+    .pip-btn {
+      background-color: #f47521;
+      color: white;
+      border: none;
+      margin-top: 10px;
+    }
+    .pip-btn:hover {
+      background-color: #d1611a;
+    }
+    hr {
+      border: 0;
+      border-top: 1px solid #ccc;
+      margin: 10px 0;
+    }
   </style>
 </head>
 <body>
-  <h3>Velocidade</h3>
-  <button data-speed="0.75">0.75x</button>
-  <button data-speed="1.0">1.0x (Normal)</button>
-  <button data-speed="1.25">1.25x</button>
-  <button data-speed="1.5">1.5x</button>
-  <button data-speed="2.0">2.0x</button>
+  <h3>Crunchyroll Extra</h3>
+  <button class="speed-btn" data-speed="0.75">0.75x</button>
+  <button class="speed-btn" data-speed="1.0">1.0x (Normal)</button>
+  <button class="speed-btn" data-speed="1.25">1.25x</button>
+  <button class="speed-btn" data-speed="1.5">1.5x</button>
+  <button class="speed-btn" data-speed="2.0">2.0x</button>
+  
+  <hr>
+  <button id="pip-btn" class="pip-btn">Picture-in-Picture 🎬</button>
   
   <script src="popup.js"></script>
 </body>
