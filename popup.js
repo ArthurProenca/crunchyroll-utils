@@ -1,10 +1,24 @@
-// Update UI to show selected speed
-function updateSelectedButton(speed) {
-  document.querySelectorAll('.speed-btn').forEach(btn => {
-    if (parseFloat(btn.getAttribute('data-speed')) === speed) {
-      btn.classList.add('selected');
-    } else {
-      btn.classList.remove('selected');
+const speedSlider = document.getElementById('speed-slider');
+const speedValueDisplay = document.getElementById('speed-value');
+const presetButtons = document.querySelectorAll('.preset-btn');
+
+function formatSpeed(speed) {
+  // guarantee 1 decimal place format like "1.0"
+  return parseFloat(speed).toFixed(1);
+}
+
+function updateUI(speed) {
+  speedSlider.value = speed;
+  speedValueDisplay.innerHTML = `${formatSpeed(speed)}<span>x</span>`;
+}
+
+function setSpeed(speed) {
+  const parsedSpeed = parseFloat(speed);
+  updateUI(parsedSpeed);
+  
+  chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+    if (tabs[0]) {
+      chrome.tabs.sendMessage(tabs[0].id, { action: "setSpeed", speed: parsedSpeed });
     }
   });
 }
@@ -12,18 +26,19 @@ function updateSelectedButton(speed) {
 // Load initial state
 chrome.storage.local.get(['crunchyrollSpeed'], (result) => {
   const currentSpeed = result.crunchyrollSpeed || 1.0;
-  updateSelectedButton(currentSpeed);
+  updateUI(currentSpeed);
 });
 
-// Setup speed buttons
-document.querySelectorAll('.speed-btn').forEach(button => {
+// Listener for slider
+speedSlider.addEventListener('input', (e) => {
+  const newSpeed = e.target.value;
+  setSpeed(newSpeed);
+});
+
+// Setup preset buttons
+presetButtons.forEach(button => {
   button.addEventListener('click', () => {
-    const speed = parseFloat(button.getAttribute('data-speed'));
-    updateSelectedButton(speed);
-    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-      if (tabs[0]) {
-        chrome.tabs.sendMessage(tabs[0].id, { action: "setSpeed", speed: speed });
-      }
-    });
+    const fixedSpeed = button.getAttribute('data-speed');
+    setSpeed(fixedSpeed);
   });
 });

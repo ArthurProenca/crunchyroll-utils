@@ -5,11 +5,14 @@
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      padding: 12px;
-      width: 180px;
+      padding: 16px;
+      width: 200px;
       background-color: #141519;
       margin: 0;
       color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
     h3 {
       text-align: center;
@@ -21,47 +24,102 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-    button {
+    .slider-container {
       width: 100%;
-      padding: 8px 4px;
-      cursor: pointer;
-      background-color: #23252b;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .speed-display {
+      font-size: 28px;
+      font-weight: bold;
       color: #ffffff;
-      border: 1px solid #33363e;
-      border-radius: 6px;
-      font-weight: 600;
-      font-size: 13px;
+      text-shadow: 0 0 10px rgba(244, 117, 33, 0.3);
+    }
+    .speed-display span {
+      font-size: 16px;
+      color: #f47521;
+      margin-left: 2px;
+    }
+    
+    /* Range Slider Styling */
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+      background: transparent;
+      margin: 8px 0;
+    }
+    
+    input[type=range]:focus {
+      outline: none;
+    }
+    
+    input[type=range]::-webkit-slider-runnable-track {
+      width: 100%;
+      height: 6px;
+      cursor: pointer;
+      background: #33363e;
+      border-radius: 3px;
+      border: none;
+    }
+    
+    input[type=range]::-webkit-slider-thumb {
+      height: 16px;
+      width: 16px;
+      border-radius: 50%;
+      background: #f47521;
+      cursor: pointer;
+      -webkit-appearance: none;
+      margin-top: -5px;
+      box-shadow: 0 0 8px rgba(244, 117, 33, 0.6);
       transition: all 0.2s ease;
     }
-    button:hover {
+    
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+      box-shadow: 0 0 12px rgba(244, 117, 33, 0.8);
+    }
+    
+    .presets {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      margin-top: 8px;
+    }
+    
+    .preset-btn {
+      background: none;
+      border: 1px solid #33363e;
+      color: #aaaaaa;
+      cursor: pointer;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+    
+    .preset-btn:hover {
+      color: #141519;
       background-color: #f47521;
       border-color: #f47521;
-      color: #141519;
-    }
-    button.selected {
-      background-color: #f47521;
-      border-color: #f47521;
-      color: #141519;
-    }
-    .full-width {
-      grid-column: span 2;
     }
   </style>
 </head>
 <body>
   <h3>Playback Speed</h3>
-  <div class="grid">
-    <button class="speed-btn" data-speed="0.75">0.75x</button>
-    <button class="speed-btn" data-speed="1.25">1.25x</button>
-    <button class="speed-btn full-width" data-speed="1.0">1.0x (Normal)</button>
-    <button class="speed-btn" data-speed="1.5">1.5x</button>
-    <button class="speed-btn" data-speed="1.8">1.8x</button>
-    <button class="speed-btn full-width" data-speed="2.0">2.0x</button>
+  
+  <div class="slider-container">
+    <div class="speed-display" id="speed-value">1.0<span>x</span></div>
+    
+    <input type="range" id="speed-slider" min="0.5" max="3.0" step="0.1" value="1.0">
+    
+    <div class="presets">
+      <button class="preset-btn" data-speed="1.0">1.0</button>
+      <button class="preset-btn" data-speed="1.5">1.5</button>
+      <button class="preset-btn" data-speed="2.0">2.0</button>
+    </div>
   </div>
   
   <script src="popup.js"></script>
