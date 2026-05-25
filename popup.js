@@ -29,8 +29,14 @@ chrome.storage.local.get(['crunchyrollSpeed'], (result) => {
   updateUI(currentSpeed);
 });
 
-// Listener for slider
+// Listener for slider (Atualiza o slider enquanto arrasta)
 speedSlider.addEventListener('input', (e) => {
+  const newSpeed = e.target.value;
+  updateUI(parseFloat(newSpeed));
+});
+
+// Efetiva a alteração da velocidade ao soltar o slider
+speedSlider.addEventListener('change', (e) => {
   const newSpeed = e.target.value;
   setSpeed(newSpeed);
 });
